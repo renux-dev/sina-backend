@@ -12,17 +12,26 @@ var knex = require('knex')({
     }
 });
 
-router.get('/', (req,res) => {
+router.get('/test', (req,res) => {
     console.log("test")
     knex.raw('select * from ayam').then(data => {
-        res.send(data)
+        res.send(data[0])
     })
 })
 
-router.post('/', (req,res) => {
-    var username = req.body.username;
-    var password = req.body.password;
-})
+router.get('/login', (req,res) => {
+    var username = req.body.username
+    var password = req.body.password
 
+    knex('Users').where({
+        username: username
+    }).select('id','username','password').then(data =>{
+        if(data[0][2] !== password){
+            console.log(data[0][0])
+        }else{
+            console.log('gagal')
+        }
+    })
+})
 
 module.exports = router
