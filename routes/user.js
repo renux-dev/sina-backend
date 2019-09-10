@@ -5,15 +5,18 @@ var router    = express.Router();
 var knex = require('knex')({
     client: 'mysql',
     connection: {
-        host : '127.0.0.1',
-        user : 'root',
-        password : '',
-        database : 'sina'
+        host : 'remotemysql.com',
+        user : 'OmZxYRRUzD',
+        password : 'Xl0XYzktCJ',
+        database : 'OmZxYRRUzD'
     }
 });
 
 router.get('/', (req,res) => {
     console.log("test")
+    knex.raw('select * from ayam').then(data => {
+        res.send(data)
+    })
 })
 
 router.post('/', (req,res) => {
