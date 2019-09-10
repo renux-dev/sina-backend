@@ -1,23 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const port = process.env.PORT || 3000;
-
-const Sequelize = require('sequelize');
-
-// Option 1: Passing parameters separately
-const sequelize = new Sequelize('sina', 'root', '', {
-  host: 'localhost',
-  dialect: 'mysql'
-});
-
-sequelize
-  .authenticate()
-  .then(() => {
-    console.log('Connection has been established successfully.');
-  })
-  .catch(err => {
-    console.error('Unable to connect to the database:', err);
-  });
+const port = process.env.PORT || 3000
 
 // create express app
 const app = express();
@@ -37,6 +20,17 @@ app.use('/v1/certificate', CertificateRouter);
 // listen for requests
 app.listen(port);
 
+
+sequelize
+.authenticate()
+.then(() => {
+    console.log('Connection has been established successfully.');
+})
+.catch(err => {
+    console.error('Unable to connect to the database:', err);
+});
+
 console.log(port)
+
 module.exports = app
 
