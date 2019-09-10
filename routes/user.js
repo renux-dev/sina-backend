@@ -19,18 +19,36 @@ router.get('/test', (req,res) => {
     })
 })
 
-router.get('/login', (req,res) => {
+router.post('/login', (req,res) => {
     var username = req.body.username
     var password = req.body.password
 
     knex('Users').where({
         username: username
     }).select('id','username','password').then(data =>{
-        if(data[0][2] !== password){
-            console.log(data[0][0])
+        // console.log(data[0].password == password)
+        // if(data[0][2] !== password){
+        //     console.log(data[0][0])
+        // }else{
+        //     console.log('gagal')
+        // }
+
+        if(data[0].password == password){
+            res.send({
+                success : true,
+                data : {id : data[0].id}
+            })
         }else{
-            console.log('gagal')
+            res.send({
+                success : false
+            })
         }
+        
+    }).catch(err => {
+        res.send({
+            success : false
+        })
+        // console.log(err) //uncomment to see err
     })
 })
 
