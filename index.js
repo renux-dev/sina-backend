@@ -20,7 +20,6 @@ app.use('/v1/certificate', CertificateRouter);
 // listen for requests
 app.listen(port);
 
-
 sequelize
 .authenticate()
 .then(() => {
@@ -28,9 +27,9 @@ sequelize
 })
 .catch(err => {
     console.error('Unable to connect to the database:', err);
+    console.log(port)
 });
 
-console.log(port)
 
 module.exports = app
 
