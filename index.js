@@ -7,8 +7,10 @@ const app = express();
 
 // Route Handler
 var SinaRouter = require('./routes/user');
+
 app.set('view engine', 'ejs')
 app.use(express.static('public'));
+
 // parse requests of content-type - application/json
 app.use(bodyParser.json({limit: '50mb'}))
 

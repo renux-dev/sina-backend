@@ -13,7 +13,7 @@ var knex = require('knex')({
 });
 
 router.get('/', (req,res) => {
-    console.log("ayam")
+    console.log("test")
 })
 
 
