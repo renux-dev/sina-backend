@@ -16,5 +16,10 @@ router.get('/', (req,res) => {
     console.log("test")
 })
 
+router.post('/', (req,res) => {
+    var username = req.body.username;
+    var password = req.body.password;
+})
+
 
 module.exports = router
