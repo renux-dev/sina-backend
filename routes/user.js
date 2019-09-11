@@ -32,7 +32,7 @@ router.get('/login', (req,res) => {
             if(data[0].password == password){
                 res.send({
                     success : true,
-                    data : {id : data[0].id}
+                    id : data[0].id
                 })
             }else{
                 console.log('gagal')
