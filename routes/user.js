@@ -49,7 +49,7 @@ router.post('/login', (req,res) => {
     })
 })
 
-router.get('/register', (req,res) => {
+router.post('/register', (req,res) => {
     var username = req.body.username
     var password = req.body.password
     var email  = req.body.email
@@ -69,6 +69,35 @@ router.get('/register', (req,res) => {
         }
     })
 
+})
+
+
+//modul posko
+
+router.post('/getPosko', (req,res) => {
+	var nama_posko =  req.body.nama_posko
+	var alamat = req.body.alamat
+	var kab_kota = req.body.kab_kota
+	var provinsi = req.body.provinsi
+	var pengampu = req.body.pengampu
+	var no_telp = req.body.no_telp
+    var foto = req.body.foto
+    var id = req.body.id
+
+    knex('Posko').insert({
+        nama_posko,
+        alamat,
+        kab_kota,
+        provinsi,
+        pengampu,
+        no_telp,
+        foto,
+        id
+    }).then((err) => {
+        res.send({
+            success: true,
+        })
+    })
 })
 
 module.exports = router
