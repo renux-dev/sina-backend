@@ -14,6 +14,7 @@ var knex = require('knex')({
 
 router.get('/', (req,res) => {
     console.log("test")
+    
     knex.raw('select * from ayam').then(data => {
         res.send(data[0])
     })
