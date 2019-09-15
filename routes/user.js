@@ -93,20 +93,31 @@ router.post('/getPosko', (req,res) => {
 	var no_telp = req.body.no_telp
     var foto = req.body.foto
     var id = req.body.id
+    var valid = 0
 
-    knex('Posko').insert({
-        nama_posko,
-        alamat,
-        kab_kota,
-        provinsi,
-        pengampu,
-        no_telp,
-        foto,
-        id
-    }).then((err) => {
-        res.send({
-            success: true,
-        })
+    knex.select("nama_posko").from("Posko").where("nama_posko", nama_posko).then(data => {
+        //console.log(data)
+        if (data.length === 0) {
+            knex('Posko').insert({
+                nama_posko,
+                alamat,
+                kab_kota,
+                provinsi,
+                pengampu,
+                no_telp,
+                foto,
+                id,
+                valid
+            }).then((err) => {
+                res.send({
+                    success: true,
+                })
+            })
+        }else{
+            res.send({
+                success : false
+            })
+        }
     })
 })
 
