@@ -21,18 +21,23 @@ router.get('/test', (req,res) => {
 
 router.post('/login', (req,res) => {
 // router.post('/login', (req,res) => {
-        var username = req.body.username
+        //var username = req.body.username
+        var email = req.body.email
         var password = req.body.password
     
         knex('Users').where({
-            username: username
-        }).select('id','username','password').then(data =>{
+            //username: username
+            email: email
+        }).select('id','username','password','email','status_relawan').then(data =>{
             // if(data[0][2] !== password){
             //     console.log(data[0][0])
             if(data[0].password == password){
                 res.send({
                     success : true,
-                    id : data[0].id
+                    id : data[0].id,
+                    username : data[0].username,
+                    email : data[0].email,
+                    status_relawan : data[0].status_relawan
                 })
             }else{
                 console.log('gagal')
@@ -53,13 +58,18 @@ router.post('/register', (req,res) => {
     var username = req.body.username
     var password = req.body.password
     var email  = req.body.email
+    var status_relawan = 0;
     
     knex.select("username").from("Users").where("username", username).then(data => {
+        //console.log(data.length)
         if (data.length === 0) {
-            knex('Users').insert({username,email,password}).then((newUserId) => {
+            knex('Users').insert({username,email,password,status_relawan}).then((newUserId) => {
                 res.send({
                     success: true, 
-                    id: newUserId[0]
+                    id: newUserId[0],
+                    username : username,
+                    email: email,
+                    status_relawan: status_relawan
                 })
             })
         }else{
