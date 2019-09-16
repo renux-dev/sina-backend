@@ -19,6 +19,87 @@ router.get('/test', (req,res) => {
     })
 })
 
+//queryData
+//User
+router.post('/getUser',(req,res)=>{
+    var id = req.body.id
+    
+    knex('Users').where({
+        //username: username
+        id: id
+    }).select('id','username','password','email','status_relawan','alamat','no_telp').then(data =>{
+        // if(data[0][2] !== password){
+        //     console.log(data[0][0])
+        if(data[0].id == id){
+            res.send({
+                success : true,
+                id : data[0].id,
+                username : data[0].username,
+                email : data[0].email,
+                alamat: data[0].alamat,
+                no_telp: data[0].no_telp,
+                status_relawan : data[0].status_relawan
+            })
+        }else{
+            //console.log('gagal')
+            res.send({
+                success : false
+            })
+        }
+    // }
+    }).catch(err => {
+        res.send({
+            success : false
+        })
+        //console.log(err) //uncomment to see err
+    })
+})
+
+//Posko
+router.post('/getPosko',(req,res)=>{
+    var id = req.body.id
+    var valid = 1
+
+    knex('Posko').where({
+        //username: username
+        id: id,
+        valid: valid
+    }).select('id_posko','nama_posko','alamat','kab_kota','provinsi','pengampu','no_telp','foto','id','valid').then(data =>{
+        // if(data[0][2] !== password){
+            // console.log(data)
+        if(data[0].id == id && data[0].valid == 1){
+            res.send({
+                success : true,
+                data : data
+                // id_posko : data[0].id_posko,
+                // nama_posko : data[0].nama_posko,
+                // alamat : data[0].alamat,
+                // kab_kota : data[0].kab_kota,
+                // provinsi : data[0].provinsi,
+                // pengampu : data[0].pengampu,
+                // no_telp : data[0].foto,
+                // id : data[0].id,
+                // valid : data[0].valid
+            })
+        }else{
+            //console.log('gagal')
+            res.send({
+                success : false
+            })
+        }
+    // }
+    }).catch(err => {
+        res.send({
+            success : false
+        })
+        //console.log(err) //uncomment to see err
+    })
+})
+
+//Artikel
+
+
+
 router.post('/login', (req,res) => {
 // router.post('/login', (req,res) => {
         //var username = req.body.username
@@ -28,16 +109,16 @@ router.post('/login', (req,res) => {
         knex('Users').where({
             //username: username
             email: email
-        }).select('id','username','password','email','status_relawan').then(data =>{
+        }).select('id','password'/*'username','email','status_relawan'*/).then(data =>{
             // if(data[0][2] !== password){
             //     console.log(data[0][0])
             if(data[0].password == password){
                 res.send({
                     success : true,
-                    id : data[0].id,
-                    username : data[0].username,
-                    email : data[0].email,
-                    status_relawan : data[0].status_relawan
+                    id : data[0].id
+                    // username : data[0].username,
+                    // email : data[0].email,
+                    // status_relawan : data[0].status_relawan
                 })
             }else{
                 console.log('gagal')
@@ -58,18 +139,20 @@ router.post('/register', (req,res) => {
     var username = req.body.username
     var password = req.body.password
     var email  = req.body.email
+    var alamat = 0
+    var no_telp = 0
     var status_relawan = 0;
     
     knex.select("username").from("Users").where("username", username).then(data => {
         //console.log(data.length)
         if (data.length === 0) {
-            knex('Users').insert({username,email,password,status_relawan}).then((newUserId) => {
+            knex('Users').insert({username,email,password,alamat,no_telp,status_relawan}).then((newUserId) => {
                 res.send({
                     success: true, 
-                    id: newUserId[0],
-                    username : username,
-                    email: email,
-                    status_relawan: status_relawan
+                    id: newUserId[0]
+                    // username : username,
+                    // email: email,
+                    // status_relawan: status_relawan
                 })
             })
         }else{
@@ -82,9 +165,16 @@ router.post('/register', (req,res) => {
 })
 
 
+//Artikel
+
+router.post('/createArtikel',(req,res) => {
+
+})
+
+
 //modul posko
 
-router.post('/getPosko', (req,res) => {
+router.post('/createPosko', (req,res) => {
 	var nama_posko =  req.body.nama_posko
 	var alamat = req.body.alamat
 	var kab_kota = req.body.kab_kota
