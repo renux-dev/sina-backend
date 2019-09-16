@@ -168,7 +168,45 @@ router.post('/register', (req,res) => {
 //Artikel
 
 router.post('/createArtikel',(req,res) => {
+	var tittle = req.body.tittle
+	var written = req.body.written
+	var date = req.body.date
+	var location = req.body.location
+	var time = req.body.time
+	var deskripsi = req.body.deskripsi
+	var luka = req.body.luka
+    var meninggal = req.body.meninggal
+    var id = req.body.id
+    var mark = 0
 
+
+    knex.select("tittle").from("Artikel").where("tittle", tittle).then(data => {
+       // console.log(data)
+        if (data.length === 0) {
+            knex('Artikel').insert({
+                tittle,
+                written,
+                date,
+                location,
+                time,
+                deskripsi,
+                luka,
+                meninggal,
+                id,
+                mark
+            }).then((newArtikelId) => {
+                res.send({
+                    success: true, 
+                    id_artikel: newArtikelId[0]
+                })
+            })
+        }else{
+            res.send({
+                success : false
+            })
+        }
+    })
+    
 })
 
 
