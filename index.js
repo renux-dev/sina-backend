@@ -9,7 +9,7 @@ const app = express();
 var SinaRouter = require('./routes/user');
 
 app.set('view engine', 'ejs')
-app.use(express.static('public'));
+app.use(express.static('./'));
 
 // parse requests of content-type - application/json
 app.use(bodyParser.json({limit: '50mb'}))
