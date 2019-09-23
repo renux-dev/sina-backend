@@ -219,29 +219,40 @@ router.post('/register', (req,res) => {
 
 })
 
-// router.post('/updateProfile', (req,res) => {
-//     var id = req.body.id
-    
-//     knex.select("username").from("Users").where("username", username).then(data => {
-//         //console.log(data.length)
-//         if (data.length === 0) {
-//             knex('Users').insert({username,email,password,alamat,no_telp,status_relawan}).then((newUserId) => {
-//                 res.send({
-//                     success: true, 
-//                     id: newUserId[0]
-//                     // username : username,
-//                     // email: email,
-//                     // status_relawan: status_relawan
-//                 })
-//             })
-//         }else{
-//             res.send({
-//                 success : false
-//             })
-//         }
-//     })
+router.post('/updateProfile', (req,res) => {
+    var id = req.body.id
+    var username = req.body.username
+    var alamat = req.body.alamat
+    var kokab = req.body.kokab
+    var provinsi = req.body.provinsi
+    var gender = req.body.gender
+    var tgl_lahir = req.body.tgl_lahir
+    var no_telp = req.body.no_telp
 
-// })
+    knex.select("id").from("Users").where("id", id).then(data => {
+        if (data.length != 0) {
+            knex('Users').where({ id: id }).update({
+                username: username,
+                alamat: alamat,
+                kokab: kokab,
+                provinsi: provinsi,
+                gender: gender,
+                tgl_lahir: tgl_lahir,
+                no_telp: no_telp
+            }, ['id', 'username']
+            ).then((updatedRows) => {
+                // updatedRows === [{id: 42, title: 'The Hitchhiker's Guide to the Galaxy'}]
+            })
+            res.send({
+                success : true
+            })
+        }else{
+            res.send({
+                success : false
+            })
+        }
+    })
+})
 
 
 //Artikel
