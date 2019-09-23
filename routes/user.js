@@ -27,7 +27,7 @@ router.post('/getUser',(req,res)=>{
     knex('Users').where({
         //username: username
         id: id
-    }).select('id','username','password','email','status_relawan','alamat','no_telp').then(data =>{
+    }).select('id','username','password','email','status_relawan','alamat','kokab','provinsi','gender','tgl_lahir','no_telp').then(data =>{
         // if(data[0][2] !== password){
         //     console.log(data[0][0])
         if(data[0].id == id){
@@ -37,6 +37,10 @@ router.post('/getUser',(req,res)=>{
                 username : data[0].username,
                 email : data[0].email,
                 alamat: data[0].alamat,
+                kokab: data[0].kokab,
+                provinsi: data[0].provinsi,
+                gender: data[0].gender,
+                tgl_lahir: data[0].tgl_lahir,
                 no_telp: data[0].no_telp,
                 status_relawan : data[0].status_relawan
             })
@@ -214,6 +218,30 @@ router.post('/register', (req,res) => {
     })
 
 })
+
+// router.post('/updateProfile', (req,res) => {
+//     var id = req.body.id
+    
+//     knex.select("username").from("Users").where("username", username).then(data => {
+//         //console.log(data.length)
+//         if (data.length === 0) {
+//             knex('Users').insert({username,email,password,alamat,no_telp,status_relawan}).then((newUserId) => {
+//                 res.send({
+//                     success: true, 
+//                     id: newUserId[0]
+//                     // username : username,
+//                     // email: email,
+//                     // status_relawan: status_relawan
+//                 })
+//             })
+//         }else{
+//             res.send({
+//                 success : false
+//             })
+//         }
+//     })
+
+// })
 
 
 //Artikel
