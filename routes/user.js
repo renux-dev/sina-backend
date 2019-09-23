@@ -97,7 +97,58 @@ router.post('/getPosko',(req,res)=>{
 })
 
 //Artikel
+router.post('/getArtikel', (req,res) => {
+    var id = req.body.id
+    var mark = 1
 
+    knex('Artikel').where({
+        //username: username
+        id: id,
+        mark: mark
+    }).select('id_artikel','tittle','written','date','location','time','deskripsi','luka','meninggal','img','mark').then(data =>{
+        //console.log(data)
+        if(data[0].mark == 1){
+            res.send({
+                success : true,
+                data : data
+            })
+        }else{
+            //console.log('gagal')
+            res.send({
+                success : false
+            })
+        }
+    }).catch(err => {
+        res.send({
+            success : false
+        })
+        //console.log(err) //uncomment to see err
+    })
+})
+
+router.post('/getArtikelAll', (req,res) => {
+    var id = req.body.id
+    var mark = 1
+    knex('Users').where({
+        id : id
+    }).select('id').then(dataID =>{
+        if(dataID.length != 0){
+            knex('Artikel').where({
+                mark: mark
+            }).select('id_artikel','tittle','written','date','location','time','deskripsi','luka','meninggal','img','mark').then(data =>{
+                res.send({
+                    success : true,
+                    data : data
+                })
+            })
+        }else{
+            //console.log('idSalah')
+            res.send({
+                success : false
+            })
+        }
+    })
+})
 
 
 router.post('/login', (req,res) => {
@@ -177,6 +228,7 @@ router.post('/createArtikel',(req,res) => {
 	var luka = req.body.luka
     var meninggal = req.body.meninggal
     var id = req.body.id
+    var img = req.body.img
     var mark = 0
 
 
@@ -192,6 +244,7 @@ router.post('/createArtikel',(req,res) => {
                 deskripsi,
                 luka,
                 meninggal,
+                img,
                 id,
                 mark
             }).then((newArtikelId) => {
@@ -208,6 +261,20 @@ router.post('/createArtikel',(req,res) => {
     })
     
 })
+
+// router.post('/upload/img', authenticationUser, function(req, res, next) {
+//     let img = req.files.img; let name = req.body.name;
+//     let link ='./public/images/'+name
+//     if (img == undefined ){
+//          console.log("no file uploaded") 
+//     }else {
+//         // Use the mv() method to place the file somewhere on your server
+//         img.mv(link, function(err) { 
+//             if (err) return res.status(500).send(err);
+//             res.send({"file" : "http://img-feeder.triplogic.io/images/"+name, "name" : name});
+//         });
+//     }
+// });
 
 
 //modul posko
