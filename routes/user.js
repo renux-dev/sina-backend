@@ -132,7 +132,6 @@ router.post('/getArtikel', (req,res) => {
 
 router.get('/getArtikelAll', (req,res) => {
     var mark = 1
-    console.log("test")
     knex('Artikel').where({
         mark: mark
     }).select('id_artikel','tittle','written','date','location','time','deskripsi','luka','meninggal','img','mark').then(data =>{
@@ -275,7 +274,107 @@ router.post('/updateProfile', (req,res) => {
         }
     })
 
-    knex.select("")
+})
+
+router.post('/cekStatus', (req,res) => {
+    var id = req.body.id
+    var status_relawan = 1
+    
+    knex.select("alamat").from("Users").where("id", id).then(data1 => {
+        if (data1[0].alamat !== " ") {
+            knex.select("kokab").from("Users").where("id", id).then(data2 => {
+                if (data2[0].kokab !== " ") {
+                    knex.select("provinsi").from("Users").where("id", id).then(data3 => {
+                        if (data3[0].provinsi !== " ") {
+                            knex.select("gender").from("Users").where("id", id).then(data4 => {
+                                if (data4[0].gender !== " ") {
+                                    knex.select("tgl_lahir").from("Users").where("id", id).then(data5 => {
+                                        if (data5[0].tgl_lahir !== null) {
+                                            knex.select("no_telp").from("Users").where("id", id).then(data6 => {
+                                                if (data6[0].no_telp !== " ") {
+                                                    console.log("berubah")
+                                                    knex('Users').where({ id: id }).update({
+                                                        status_relawan: status_relawan
+                                                    }, ['id', 'username']
+                                                    ).then((updatedRows) => {
+                                                        // updatedRows === [{id: 42, title: 'The Hitchhiker's Guide to the Galaxy'}]
+                                                    })
+                                                    res.send({
+                                                        success : true
+                                                    })
+                                                }else{
+                                                    knex('Users').where({ id: id }).update({
+                                                        status_relawan: 0
+                                                    }, ['id', 'username']
+                                                    ).then((updatedRows) => {
+                                                        // updatedRows === [{id: 42, title: 'The Hitchhiker's Guide to the Galaxy'}]
+                                                    })
+                                                    res.send({
+                                                        succses : false
+                                                    })
+                                                }
+                                            })
+                                        }else{
+                                            knex('Users').where({ id: id }).update({
+                                                status_relawan: 0
+                                            }, ['id', 'username']
+                                            ).then((updatedRows) => {
+                                                // updatedRows === [{id: 42, title: 'The Hitchhiker's Guide to the Galaxy'}]
+                                            })
+                                            res.send({
+                                                succses : false
+                                            })
+                                        }
+                                    })
+                                }else{
+                                    knex('Users').where({ id: id }).update({
+                                        status_relawan: 0
+                                    }, ['id', 'username']
+                                    ).then((updatedRows) => {
+                                        // updatedRows === [{id: 42, title: 'The Hitchhiker's Guide to the Galaxy'}]
+                                    })
+                                    res.send({
+                                        succses : false
+                                    })
+                                }
+                            })
+                        }else{
+                            knex('Users').where({ id: id }).update({
+                                status_relawan: 0
+                            }, ['id', 'username']
+                            ).then((updatedRows) => {
+                                // updatedRows === [{id: 42, title: 'The Hitchhiker's Guide to the Galaxy'}]
+                            })
+                            res.send({
+                                succses : false
+                            })
+                        }
+                    })
+                }else{
+                    knex('Users').where({ id: id }).update({
+                        status_relawan: 0
+                    }, ['id', 'username']
+                    ).then((updatedRows) => {
+                        // updatedRows === [{id: 42, title: 'The Hitchhiker's Guide to the Galaxy'}]
+                    })
+                    res.send({
+                        succses : false
+                    })
+                }
+            })
+        }else{
+            knex('Users').where({ id: id }).update({
+                status_relawan: 0
+            }, ['id', 'username']
+            ).then((updatedRows) => {
+                // updatedRows === [{id: 42, title: 'The Hitchhiker's Guide to the Galaxy'}]
+            })
+            res.send({
+                succses : false
+            })
+        }
+    })
+
 })
 
 
