@@ -131,10 +131,16 @@ router.post('/getArtikel', (req,res) => {
 })
 
 router.get('/getArtikelAll', (req,res) => {
+    var mark = 1
     console.log("test")
-    knex.raw('select * from Artikel').where({mark : 1}).then(data => {
-        res.send(data[0])
-    })
+    knex('Artikel').where({
+        mark: mark
+    }).select('id_artikel','tittle','written','date','location','time','deskripsi','luka','meninggal','img','mark').then(data =>{
+        res.send({
+            success : true,
+            data : data
+        })
+    })   
 })
 
 // router.post('/getArtikelAll', (req,res) => {
@@ -201,8 +207,8 @@ router.post('/register', (req,res) => {
     var username = req.body.username
     var password = req.body.password
     var email  = req.body.email
-    var alamat = 0
-    var no_telp = 0
+    //var alamat = 0
+    //var no_telp = 0
     var status_relawan = 0;
     
     knex.select("username").from("Users").where("username", username).then(data1 => {
@@ -210,7 +216,7 @@ router.post('/register', (req,res) => {
         if (data1.length === 0) {
             knex.select("email").from("Users").where("email", email).then(data2 => {
                 if (data2.length === 0) {
-                    knex('Users').insert({username,email,password,alamat,no_telp,status_relawan}).then((newUserId) => {
+                    knex('Users').insert({username,email,password,status_relawan}).then((newUserId) => {
                         res.send({
                             success: true, 
                             id: newUserId[0]
@@ -243,6 +249,7 @@ router.post('/updateProfile', (req,res) => {
     var gender = req.body.gender
     var tgl_lahir = req.body.tgl_lahir
     var no_telp = req.body.no_telp
+    var status_relawan = 1
 
     knex.select("id").from("Users").where("id", id).then(data => {
         if (data.length != 0) {
@@ -267,6 +274,8 @@ router.post('/updateProfile', (req,res) => {
             })
         }
     })
+
+    knex.select("")
 })
 
 
