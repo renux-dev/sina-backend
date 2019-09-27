@@ -144,30 +144,39 @@ router.get('/getArtikelAll', (req,res) => {
 
 router.post('/getWishlist', (req,res) => {
     var id = req.body.id
-    var wishlist = 1
+    var elements = []
 
-    knex('Artikel').where({
+    knex('Wishlist').where({
         //username: username
         id: id,
-        wishlist: wishlist
-    }).select('id_artikel','tittle','written','date','location','time','deskripsi','luka','meninggal','img','mark', 'wishlist').then(data =>{
-        //console.log(data)
-        if(data[0].wishlist == 1){
-            res.send({
-                success : true,
-                data : data
-            })
-        }else{
-            //console.log('gagal')
-            res.send({
-                success : false
+    }).select('id','id_artikel').then(data =>{
+        // console.log(data)
+        for(var i=0; i<data.length; i++){
+            var id_artikel = data[i].id_artikel
+            // console.log(id_artikel)
+            knex('Artikel').where('id_artikel', id_artikel)
+            .select('id_artikel','tittle','written','date','location','time','deskripsi','luka','meninggal','img','mark').then(data1 =>{
+                elements.push({
+                    "id_artikel": data1[0].id_artikel,
+                    "tittle": data1[0].tittle,
+                    "written": data1[0].written,
+                    "date": data1[0].date,
+                    "location": data1[0].location,
+                    "time": data1[0].time,
+                    "deskripsi": data1[0].deskripsi,
+                    "luka": data1[0].luka,
+                    "meninggal": data1[0].meninggal,
+                    "img": data1[0].img,
+                    "mark": data1[0].mark
+                });
+                //console.log (elements)
+                // return elements
             })
         }
-    }).catch(err => {
         res.send({
-            success : false
+            elements
         })
-        //console.log(err) //uncomment to see err
+        // console.log(result)
     })
 })
 
