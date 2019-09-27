@@ -130,29 +130,36 @@ router.post('/getArtikel', (req,res) => {
     })
 })
 
-router.post('/getArtikelAll', (req,res) => {
-    var id = req.body.id
-    var mark = 1
-    knex('Users').where({
-        id : id
-    }).select('id').then(dataID =>{
-        if(dataID.length != 0){
-            knex('Artikel').where({
-                mark: mark
-            }).select('id_artikel','tittle','written','date','location','time','deskripsi','luka','meninggal','img','mark').then(data =>{
-                res.send({
-                    success : true,
-                    data : data
-                })
-            })
-        }else{
-            //console.log('idSalah')
-            res.send({
-                success : false
-            })
-        }
+router.get('/getArtikelAll', (req,res) => {
+    console.log("test")
+    knex.raw('select * from Artikel').where({mark : 1}).then(data => {
+        res.send(data[0])
     })
 })
+
+// router.post('/getArtikelAll', (req,res) => {
+//     var id = req.body.id
+//     var mark = 1
+//     knex('Users').where({
+//         id : id
+//     }).select('id').then(dataID =>{
+//         if(dataID.length != 0){
+//             knex('Artikel').where({
+//                 mark: mark
+//             }).select('id_artikel','tittle','written','date','location','time','deskripsi','luka','meninggal','img','mark').then(data =>{
+//                 res.send({
+//                     success : true,
+//                     data : data
+//                 })
+//             })
+//         }else{
+//             //console.log('idSalah')
+//             res.send({
+//                 success : false
+//             })
+//         }
+//     })
+// })
 
 
 router.post('/login', (req,res) => {
@@ -198,17 +205,25 @@ router.post('/register', (req,res) => {
     var no_telp = 0
     var status_relawan = 0;
     
-    knex.select("username").from("Users").where("username", username).then(data => {
+    knex.select("username").from("Users").where("username", username).then(data1 => {
         //console.log(data.length)
-        if (data.length === 0) {
-            knex('Users').insert({username,email,password,alamat,no_telp,status_relawan}).then((newUserId) => {
-                res.send({
-                    success: true, 
-                    id: newUserId[0]
-                    // username : username,
-                    // email: email,
-                    // status_relawan: status_relawan
-                })
+        if (data1.length === 0) {
+            knex.select("email").from("Users").where("email", email).then(data2 => {
+                if (data2.length === 0) {
+                    knex('Users').insert({username,email,password,alamat,no_telp,status_relawan}).then((newUserId) => {
+                        res.send({
+                            success: true, 
+                            id: newUserId[0]
+                            // username : username,
+                            // email: email,
+                            // status_relawan: status_relawan
+                        })
+                    })
+                }else{
+                    res.send({
+                        success : false
+                    })
+                }
             })
         }else{
             res.send({
@@ -301,7 +316,25 @@ router.post('/createArtikel',(req,res) => {
     
 })
 
-// router.post('/upload/img', authenticationUser, function(req, res, next) {
+// router.post('/upload', function(req, res, next) {
+//     let img = req.files.img
+//     let name = req.body.name;
+//     let link = 'D:\SiNa\img'+name
+//     if (img == undefined ){
+//          console.log("no file uploaded") 
+//     }else {
+//         // Use the mv() method to place the file somewhere on your server
+//         img.mv(link, function(err) { 
+//             if (err) return res.status(500).send(err);
+//             res.send(
+//                 succses : true,
+//                 {"file" : "D:\SiNa\img"+name, "name" : name}
+//             );
+//         });
+//     }
+// });
+
+// router.post('/upload', authenticationUser, function(req, res, next) {
 //     let img = req.files.img; let name = req.body.name;
 //     let link ='./public/images/'+name
 //     if (img == undefined ){
@@ -310,7 +343,7 @@ router.post('/createArtikel',(req,res) => {
 //         // Use the mv() method to place the file somewhere on your server
 //         img.mv(link, function(err) { 
 //             if (err) return res.status(500).send(err);
-//             res.send({"file" : "http://img-feeder.triplogic.io/images/"+name, "name" : name});
+//             res.send({"file" : "D:\SiNa\img"+name, "name" : name});
 //         });
 //     }
 // });
