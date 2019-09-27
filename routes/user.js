@@ -277,7 +277,6 @@ router.post('/updateProfile', (req,res) => {
     var gender = req.body.gender
     var tgl_lahir = req.body.tgl_lahir
     var no_telp = req.body.no_telp
-    var status_relawan = 1
 
     knex.select("id").from("Users").where("id", id).then(data => {
         if (data.length != 0) {
@@ -305,6 +304,34 @@ router.post('/updateProfile', (req,res) => {
 
 })
 
+router.post('/updateWishlist', (req,res) => {
+    var id_artikel = req.body.id_artikel
+    var id = req.body.id
+
+    knex('Wishlist').where({
+        id: id,
+        id_artikel: id_artikel
+    }).select('id_artikel','id').then(data1 => {
+               // console.log(data1)
+                if(data1.length != 0){
+                    if((data1[0].id_artikel == id_artikel) && (data1[0].id == id)){
+                        knex("Wishlist").delete().where('id', id).andWhere('id_artikel', id_artikel).then(data2 =>{
+                            res.send({
+                                success: true
+                            })
+                        })
+                        console.log("deleted")
+                    }
+                }else{
+                    knex('Wishlist').insert({id_artikel,id}).then((newUserId) => {
+                        res.send({
+                            success: true
+                        })
+                    })
+                    console.log("inserted")
+                }
+    })
+})
 
 router.post('/cekStatus', (req,res) => {
     var id = req.body.id
