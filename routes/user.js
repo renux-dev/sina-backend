@@ -142,6 +142,35 @@ router.get('/getArtikelAll', (req,res) => {
     })   
 })
 
+router.post('/getWishlist', (req,res) => {
+    var id = req.body.id
+    var wishlist = 1
+
+    knex('Artikel').where({
+        //username: username
+        id: id,
+        wishlist: wishlist
+    }).select('id_artikel','tittle','written','date','location','time','deskripsi','luka','meninggal','img','mark', 'wishlist').then(data =>{
+        //console.log(data)
+        if(data[0].wishlist == 1){
+            res.send({
+                success : true,
+                data : data
+            })
+        }else{
+            //console.log('gagal')
+            res.send({
+                success : false
+            })
+        }
+    }).catch(err => {
+        res.send({
+            success : false
+        })
+        //console.log(err) //uncomment to see err
+    })
+})
+
 // router.post('/getArtikelAll', (req,res) => {
 //     var id = req.body.id
 //     var mark = 1
@@ -275,6 +304,7 @@ router.post('/updateProfile', (req,res) => {
     })
 
 })
+
 
 router.post('/cekStatus', (req,res) => {
     var id = req.body.id
