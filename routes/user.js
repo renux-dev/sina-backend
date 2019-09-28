@@ -131,29 +131,90 @@ router.post('/getArtikel', (req,res) => {
     })
 })
 
-router.post('/getArtikelAll', (req,res) => {
-    var id = req.body.id
+router.get('/getArtikelAll', (req,res) => {
     var mark = 1
-    knex('Users').where({
-        id : id
-    }).select('id').then(dataID =>{
-        if(dataID.length != 0){
-            knex('Artikel').where({
-                mark: mark
-            }).select('id_artikel','tittle','written','date','location','time','deskripsi','luka','meninggal','img','mark').then(data =>{
-                res.send({
-                    success : true,
-                    data : data
-                })
-            })
-        }else{
-            //console.log('idSalah')
-            res.send({
-                success : false
-            })
+    knex('Artikel').where({
+        mark: mark
+    }).select('id_artikel','tittle','written','date','location','time','deskripsi','luka','meninggal','img','mark').then(data =>{
+        res.send({
+            success : true,
+            data : data
+        })
+    })   
+})
+
+router.post('/getWishlist', (req,res) => {
+    var id = req.body.id
+    var data = []
+
+    knex('Wishlist').where({
+        //username: username
+        id: id,
+    }).select('id','id_artikel').then(data2 =>{
+        // console.log(data2)
+        var n = data2.length
+        for(var i=0; i<n; i++){
+            var id_artikel = data2[i].id_artikel
+            getData(i)
         }
+            
+            async function getData(i){
+
+                await knex('Artikel').where('id_artikel', id_artikel)
+                .select('id_artikel','tittle','written','date','location','time','deskripsi','luka','meninggal','img','mark').then(data1 =>{
+                    data.push({
+                        "id_artikel": data1[0].id_artikel,
+                        "tittle": data1[0].tittle,
+                        "written": data1[0].written,
+                        "date": data1[0].date,
+                        "location": data1[0].location,
+                        "time": data1[0].time,
+                        "deskripsi": data1[0].deskripsi,
+                        "luka": data1[0].luka,
+                        "meninggal": data1[0].meninggal,
+                        "img": data1[0].img,
+                        "mark": data1[0].mark
+                    });
+                    console.log(i,n)
+                    console.log (data,"opl")
+                    if(i==(n-1)){
+                        res.send({
+                            data
+                        })
+                    }
+                    // return elements
+                })
+
+            }// console.log(id_artikel)
+           
+        //}
+        // console.log(result)
     })
 })
+
+// router.post('/getArtikelAll', (req,res) => {
+//     var id = req.body.id
+//     var mark = 1
+//     knex('Users').where({
+//         id : id
+//     }).select('id').then(dataID =>{
+//         if(dataID.length != 0){
+//             knex('Artikel').where({
+//                 mark: mark
+//             }).select('id_artikel','tittle','written','date','location','time','deskripsi','luka','meninggal','img','mark').then(data =>{
+//                 res.send({
+//                     success : true,
+//                     data : data
+//                 })
+//             })
+//         }else{
+//             //console.log('idSalah')
+//             res.send({
+//                 success : false
+//             })
+//         }
+//     })
+// })
 
 
 router.post('/login', (req,res) => {
@@ -195,21 +256,29 @@ router.post('/register', (req,res) => {
     var username = req.body.username
     var password = req.body.password
     var email  = req.body.email
-    var alamat = 0
-    var no_telp = 0
+    //var alamat = 0
+    //var no_telp = 0
     var status_relawan = 0;
     
-    knex.select("username").from("Users").where("username", username).then(data => {
+    knex.select("username").from("Users").where("username", username).then(data1 => {
         //console.log(data.length)
-        if (data.length === 0) {
-            knex('Users').insert({username,email,password,alamat,no_telp,status_relawan}).then((newUserId) => {
-                res.send({
-                    success: true, 
-                    id: newUserId[0]
-                    // username : username,
-                    // email: email,
-                    // status_relawan: status_relawan
-                })
+        if (data1.length === 0) {
+            knex.select("email").from("Users").where("email", email).then(data2 => {
+                if (data2.length === 0) {
+                    knex('Users').insert({username,email,password,status_relawan}).then((newUserId) => {
+                        res.send({
+                            success: true, 
+                            id: newUserId[0]
+                            // username : username,
+                            // email: email,
+                            // status_relawan: status_relawan
+                        })
+                    })
+                }else{
+                    res.send({
+                        success : false
+                    })
+                }
             })
         }else{
             res.send({
@@ -253,6 +322,137 @@ router.post('/updateProfile', (req,res) => {
             })
         }
     })
+
+})
+
+router.post('/updateWishlist', (req,res) => {
+    var id_artikel = req.body.id_artikel
+    var id = req.body.id
+
+    knex('Wishlist').where({
+        id: id,
+        id_artikel: id_artikel
+    }).select('id_artikel','id').then(data1 => {
+               // console.log(data1)
+                if(data1.length != 0){
+                    if((data1[0].id_artikel == id_artikel) && (data1[0].id == id)){
+                        knex("Wishlist").delete().where('id', id).andWhere('id_artikel', id_artikel).then(data2 =>{
+                            res.send({
+                                success: true
+                            })
+                        })
+                        console.log("deleted")
+                    }
+                }else{
+                    knex('Wishlist').insert({id_artikel,id}).then((newUserId) => {
+                        res.send({
+                            success: true
+                        })
+                    })
+                    console.log("inserted")
+                }
+    })
+})
+
+router.post('/cekStatus', (req,res) => {
+    var id = req.body.id
+    var status_relawan = 1
+    
+    knex.select("alamat").from("Users").where("id", id).then(data1 => {
+        if (data1[0].alamat !== " ") {
+            knex.select("kokab").from("Users").where("id", id).then(data2 => {
+                if (data2[0].kokab !== " ") {
+                    knex.select("provinsi").from("Users").where("id", id).then(data3 => {
+                        if (data3[0].provinsi !== " ") {
+                            knex.select("gender").from("Users").where("id", id).then(data4 => {
+                                if (data4[0].gender !== " ") {
+                                    knex.select("tgl_lahir").from("Users").where("id", id).then(data5 => {
+                                        if (data5[0].tgl_lahir !== null) {
+                                            knex.select("no_telp").from("Users").where("id", id).then(data6 => {
+                                                if (data6[0].no_telp !== " ") {
+                                                    console.log("berubah")
+                                                    knex('Users').where({ id: id }).update({
+                                                        status_relawan: status_relawan
+                                                    }, ['id', 'username']
+                                                    ).then((updatedRows) => {
+                                                        // updatedRows === [{id: 42, title: 'The Hitchhiker's Guide to the Galaxy'}]
+                                                    })
+                                                    res.send({
+                                                        success : true
+                                                    })
+                                                }else{
+                                                    knex('Users').where({ id: id }).update({
+                                                        status_relawan: 0
+                                                    }, ['id', 'username']
+                                                    ).then((updatedRows) => {
+                                                        // updatedRows === [{id: 42, title: 'The Hitchhiker's Guide to the Galaxy'}]
+                                                    })
+                                                    res.send({
+                                                        succses : false
+                                                    })
+                                                }
+                                            })
+                                        }else{
+                                            knex('Users').where({ id: id }).update({
+                                                status_relawan: 0
+                                            }, ['id', 'username']
+                                            ).then((updatedRows) => {
+                                                // updatedRows === [{id: 42, title: 'The Hitchhiker's Guide to the Galaxy'}]
+                                            })
+                                            res.send({
+                                                succses : false
+                                            })
+                                        }
+                                    })
+                                }else{
+                                    knex('Users').where({ id: id }).update({
+                                        status_relawan: 0
+                                    }, ['id', 'username']
+                                    ).then((updatedRows) => {
+                                        // updatedRows === [{id: 42, title: 'The Hitchhiker's Guide to the Galaxy'}]
+                                    })
+                                    res.send({
+                                        succses : false
+                                    })
+                                }
+                            })
+                        }else{
+                            knex('Users').where({ id: id }).update({
+                                status_relawan: 0
+                            }, ['id', 'username']
+                            ).then((updatedRows) => {
+                                // updatedRows === [{id: 42, title: 'The Hitchhiker's Guide to the Galaxy'}]
+                            })
+                            res.send({
+                                succses : false
+                            })
+                        }
+                    })
+                }else{
+                    knex('Users').where({ id: id }).update({
+                        status_relawan: 0
+                    }, ['id', 'username']
+                    ).then((updatedRows) => {
+                        // updatedRows === [{id: 42, title: 'The Hitchhiker's Guide to the Galaxy'}]
+                    })
+                    res.send({
+                        succses : false
+                    })
+                }
+            })
+        }else{
+            knex('Users').where({ id: id }).update({
+                status_relawan: 0
+            }, ['id', 'username']
+            ).then((updatedRows) => {
+                // updatedRows === [{id: 42, title: 'The Hitchhiker's Guide to the Galaxy'}]
+            })
+            res.send({
+                succses : false
+            })
+        }
+    })
+
 })
 
 
@@ -302,7 +502,25 @@ router.post('/createArtikel',(req,res) => {
     
 })
 
-// router.post('/upload/img', authenticationUser, function(req, res, next) {
+// router.post('/upload', function(req, res, next) {
+//     let img = req.files.img
+//     let name = req.body.name;
+//     let link = 'D:\SiNa\img'+name
+//     if (img == undefined ){
+//          console.log("no file uploaded") 
+//     }else {
+//         // Use the mv() method to place the file somewhere on your server
+//         img.mv(link, function(err) { 
+//             if (err) return res.status(500).send(err);
+//             res.send(
+//                 succses : true,
+//                 {"file" : "D:\SiNa\img"+name, "name" : name}
+//             );
+//         });
+//     }
+// });
+
+// router.post('/upload', authenticationUser, function(req, res, next) {
 //     let img = req.files.img; let name = req.body.name;
 //     let link ='./public/images/'+name
 //     if (img == undefined ){
@@ -311,7 +529,7 @@ router.post('/createArtikel',(req,res) => {
 //         // Use the mv() method to place the file somewhere on your server
 //         img.mv(link, function(err) { 
 //             if (err) return res.status(500).send(err);
-//             res.send({"file" : "http://img-feeder.triplogic.io/images/"+name, "name" : name});
+//             res.send({"file" : "D:\SiNa\img"+name, "name" : name});
 //         });
 //     }
 // });
