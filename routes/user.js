@@ -144,38 +144,49 @@ router.get('/getArtikelAll', (req,res) => {
 
 router.post('/getWishlist', (req,res) => {
     var id = req.body.id
-    var elements = []
+    var data = []
 
     knex('Wishlist').where({
         //username: username
         id: id,
-    }).select('id','id_artikel').then(data =>{
-        // console.log(data)
-        for(var i=0; i<data.length; i++){
-            var id_artikel = data[i].id_artikel
-            // console.log(id_artikel)
-            knex('Artikel').where('id_artikel', id_artikel)
-            .select('id_artikel','tittle','written','date','location','time','deskripsi','luka','meninggal','img','mark').then(data1 =>{
-                elements.push({
-                    "id_artikel": data1[0].id_artikel,
-                    "tittle": data1[0].tittle,
-                    "written": data1[0].written,
-                    "date": data1[0].date,
-                    "location": data1[0].location,
-                    "time": data1[0].time,
-                    "deskripsi": data1[0].deskripsi,
-                    "luka": data1[0].luka,
-                    "meninggal": data1[0].meninggal,
-                    "img": data1[0].img,
-                    "mark": data1[0].mark
-                });
-                //console.log (elements)
-                // return elements
-            })
+    }).select('id','id_artikel').then(data2 =>{
+        // console.log(data2)
+        var n = data2.length
+        for(var i=0; i<n; i++){
+            var id_artikel = data2[i].id_artikel
+            getData(i)
         }
-        res.send({
-            elements
-        })
+            
+            async function getData(i){
+
+                await knex('Artikel').where('id_artikel', id_artikel)
+                .select('id_artikel','tittle','written','date','location','time','deskripsi','luka','meninggal','img','mark').then(data1 =>{
+                    data.push({
+                        "id_artikel": data1[0].id_artikel,
+                        "tittle": data1[0].tittle,
+                        "written": data1[0].written,
+                        "date": data1[0].date,
+                        "location": data1[0].location,
+                        "time": data1[0].time,
+                        "deskripsi": data1[0].deskripsi,
+                        "luka": data1[0].luka,
+                        "meninggal": data1[0].meninggal,
+                        "img": data1[0].img,
+                        "mark": data1[0].mark
+                    });
+                    console.log(i,n)
+                    console.log (data,"opl")
+                    if(i==(n-1)){
+                        res.send({
+                            data
+                        })
+                    }
+                    // return elements
+                })
+
+            }// console.log(id_artikel)
+           
+        //}
         // console.log(result)
     })
 })
