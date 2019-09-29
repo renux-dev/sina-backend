@@ -1,5 +1,7 @@
 var express   = require('express');
 var router    = express.Router();
+const axios = require('axios')
+// var parser = require('xml2json');
 // var moment    = require('moment-timezone');
 
 var knex = require('knex')({
@@ -17,6 +19,31 @@ router.get('/test', (req,res) => {
     knex.raw('select * from ayam').then(data => {
         res.send(data[0])
     })
+})
+
+// router.get('/', (req,res) => {
+//     axios.get('http://data.bmkg.go.id/gempaterkini.xml').then(data => {
+//      //    console.log(data.data)
+//         var json = parser.toJson(data.data);
+//         parsedJson = JSON.parse(json)
+//         console.log(parsedJson.Infogempa.gempa[0])``
+//         res.send(parsedJson.Infogempa.gempa[0])
+//     }).catch(err => {
+//         console.log(err)
+//     })
+//  })
+
+router.post('/Donasi', (req,res) =>{
+    var id = req.body.id
+    var jumlah = req.body.jumlah
+    var date = req.body.date
+
+    knex('Donasi').insert({id,jumlah,date}).then((newUserId) => {
+        res.send({
+            success: true
+        })
+    })
+    //console.log("inserted")    
 })
 
 //queryData
@@ -130,15 +157,29 @@ router.post('/getArtikel', (req,res) => {
     })
 })
 
-router.get('/getArtikelAll/:offset/:limit', (req,res) => {
+// router.get('/getArtikelAll/:offset/:limit', (req,res) => {
+//     var mark = 1
+//     var limit = +req.params.limit
+//     var offset = +req.params.offset
+
+//     //console.log("la",offset, limit)
+//     knex('Artikel').where({
+//         mark
+//     }).limit(limit).offset(offset).select('id_artikel','tittle','written','date','location','time','deskripsi','luka','meninggal','img','mark').then(data =>{
+//         res.send({
+//             success : true,
+//             data
+//         })
+//     })   
+// })
+
+router.get('/getArtikelAll', (req,res) => {
     var mark = 1
-    var limit = +req.params.limit
-    var offset = +req.params.offset
 
     //console.log("la",offset, limit)
     knex('Artikel').where({
         mark
-    }).limit(limit).offset(offset).select('id_artikel','tittle','written','date','location','time','deskripsi','luka','meninggal','img','mark').then(data =>{
+    }).select('id_artikel','tittle','written','date','location','time','deskripsi','luka','meninggal','img','mark').then(data =>{
         res.send({
             success : true,
             data
@@ -156,9 +197,16 @@ router.post('/getWishlist', (req,res) => {
     }).select('id','id_artikel').then(data2 =>{
         // console.log(data2)
         var n = data2.length
-        for(var i=0; i<n; i++){
-            var id_artikel = data2[i].id_artikel
-            getData(i)
+        //console.log(n)
+        if(n != 0){
+            for(var i=0; i<n; i++){
+                var id_artikel = data2[i].id_artikel
+                getData(i)
+            }
+        }else{
+            res.send({
+                success: false
+            })
         }
             
             async function getData(i){
