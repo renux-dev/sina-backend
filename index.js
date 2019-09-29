@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const port = process.env.PORT || 3000
+var xmlparser = require('express-xml-bodyparser');
 
 // create express app
 const app = express();
@@ -9,6 +10,7 @@ const app = express();
 var SinaRouter = require('./routes/user');
 
 app.set('view engine', 'ejs')
+app.use(xmlparser());
 app.use(express.static('./'));
 
 // parse requests of content-type - application/json

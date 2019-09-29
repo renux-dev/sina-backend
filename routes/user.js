@@ -1,5 +1,7 @@
 var express   = require('express');
 var router    = express.Router();
+const axios = require('axios')
+var parser = require('xml2json');
 // var moment    = require('moment-timezone');
 
 var knex = require('knex')({
@@ -13,11 +15,15 @@ var knex = require('knex')({
 });
 
 router.get('/', (req,res) => {
-    console.log("test")
-    
-    knex.raw('select * from ayam').then(data => {
-        res.send(data[0])
-    })
+   axios.get('http://data.bmkg.go.id/gempaterkini.xml').then(data => {
+    //    console.log(data.data)
+       var json = parser.toJson(data.data);
+       parsedJson = JSON.parse(json)
+       console.log(parsedJson.Infogempa.gempa[0])``
+       res.send(parsedJson.Infogempa.gempa[0])
+   }).catch(err => {
+       console.log(err)
+   })
 })
 
 //queryData
