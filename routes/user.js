@@ -376,6 +376,32 @@ router.post('/updateProfile', (req,res) => {
 
 })
 
+// router.post('/updatePosko', (req,res) = > {
+//     var id_posko = body.req.id_posko
+//     var nama_posko = body.req.nama_posko
+// 	var alamat = body.req.alamat
+// 	var kab_kota = body.req.kab_kota
+// 	var provinsi = body.req.provinsi
+// 	var pengampu = body.req.pengampu
+// 	var no_telp = body.req.no_telp
+// 	var foto = body.req.foto
+// 	var laki = body.req.laki
+// 	var anak = body.req.anak
+// 	var balita = body.req.balita
+// 	var disabilitas = body.req.disabilitas
+// 	var perempuan = body.req.perempuan
+// 	var ibu = body.req.ibu
+// 	var lansia = body.req.lansia
+    
+//     knex('Posko').where({id_posko}).update({
+//         status_relawan: status_relawan
+//     }, ['id', 'username']
+//     ).then((updatedRows) => {
+//         // updatedRows === [{id: 42, title: 'The Hitchhiker's Guide to the Galaxy'}]
+    
+//     })
+// })
+
 router.post('/updateWishlist', (req,res) => {
     var id_artikel = req.body.id_artikel
     var id = req.body.id
