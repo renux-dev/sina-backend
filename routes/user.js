@@ -130,14 +130,18 @@ router.post('/getArtikel', (req,res) => {
     })
 })
 
-router.get('/getArtikelAll', (req,res) => {
+router.get('/getArtikelAll/:offset/:limit', (req,res) => {
     var mark = 1
+    var limit = +req.params.limit
+    var offset = +req.params.offset
+
+    //console.log("la",offset, limit)
     knex('Artikel').where({
-        mark: mark
-    }).select('id_artikel','tittle','written','date','location','time','deskripsi','luka','meninggal','img','mark').then(data =>{
+        mark
+    }).limit(limit).offset(offset).select('id_artikel','tittle','written','date','location','time','deskripsi','luka','meninggal','img','mark').then(data =>{
         res.send({
             success : true,
-            data : data
+            data
         })
     })   
 })
