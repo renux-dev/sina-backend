@@ -137,7 +137,7 @@ router.post('/getArtikel', (req,res) => {
         id: id,
         mark: mark
     }).select('id_artikel','tittle','written','date','location','time','deskripsi','luka','meninggal','img','mark').then(data =>{
-        //console.log(data)
+        console.log(data)
         if(data[0].mark == 1){
             res.send({
                 success : true,
@@ -226,10 +226,11 @@ router.post('/getWishlist', (req,res) => {
                         "img": data1[0].img,
                         "mark": data1[0].mark
                     });
-                    console.log(i,n)
-                    console.log (data,"opl")
+                    // console.log(i,n)
+                    // console.log (data,"opl")
                     if(i==(n-1)){
                         res.send({
+                            succses: true,
                             data
                         })
                     }
@@ -376,31 +377,42 @@ router.post('/updateProfile', (req,res) => {
 
 })
 
-// router.post('/updatePosko', (req,res) = > {
-//     var id_posko = body.req.id_posko
-//     var nama_posko = body.req.nama_posko
-// 	var alamat = body.req.alamat
-// 	var kab_kota = body.req.kab_kota
-// 	var provinsi = body.req.provinsi
-// 	var pengampu = body.req.pengampu
-// 	var no_telp = body.req.no_telp
-// 	var foto = body.req.foto
-// 	var laki = body.req.laki
-// 	var anak = body.req.anak
-// 	var balita = body.req.balita
-// 	var disabilitas = body.req.disabilitas
-// 	var perempuan = body.req.perempuan
-// 	var ibu = body.req.ibu
-// 	var lansia = body.req.lansia
+router.post('/updatePosko', (req,res) => {
+    var id_posko = req.body.id_posko
+    var nama_posko = req.body.nama_posko
+	var alamat = req.body.alamat
+	var kab_kota = req.body.kab_kota
+	var provinsi = req.body.provinsi
+	var pengampu = req.body.pengampu
+	var no_telp = req.body.no_telp
+	var foto = req.body.foto
+	var laki = req.body.laki
+	var anak = req.body.anak
+	var balita = req.body.balita
+	var disabilitas = req.body.disabilitas
+	var perempuan = req.body.perempuan
+	var ibu = req.body.ibu
+	var lansia = req.body.lansia
     
-//     knex('Posko').where({id_posko}).update({
-//         status_relawan: status_relawan
-//     }, ['id', 'username']
-//     ).then((updatedRows) => {
-//         // updatedRows === [{id: 42, title: 'The Hitchhiker's Guide to the Galaxy'}]
-    
-//     })
-// })
+    knex.select("id_posko").from("Posko").where("id_posko", id_posko).then(data => {
+        if (data.length != 0) {
+            knex('Posko').where({id_posko}).update({
+                id_posko, nama_posko, alamat, kab_kota, provinsi, pengampu, no_telp, foto, laki, anak, balita, disabilitas, perempuan, ibu, lansia
+            }, ['id', 'username']
+            ).then((updatedRows) => {
+                // updatedRows === [{id: 42, title: 'The Hitchhiker's Guide to the Galaxy'}]
+            })
+            res.send({
+                success: true
+            })
+        }else{
+            res.send({
+                success: false
+            })
+        }
+    })
+
+})
 
 router.post('/updateWishlist', (req,res) => {
     var id_artikel = req.body.id_artikel
